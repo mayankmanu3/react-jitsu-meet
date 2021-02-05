@@ -8945,6 +8945,11 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.1.tgz#5b3531bd76a645a4c9fb6e693ed36419e3301339"
   integrity sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA==
 
+react-jutsu@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/react-jutsu/-/react-jutsu-3.0.1.tgz#85efc26df83e8ccb5a00ba90e7f942b5c0af147b"
+  integrity sha512-jLIvAc2iAE7rwyAwwdVGc9kpcIuB2LETieVwEU9NmdE4lIKrRH93bsBfHq5z09IoNuLTqpCKy6Sn4/Hysz9pyg==
+
 react-refresh@^0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
