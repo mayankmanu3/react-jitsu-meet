@@ -2,13 +2,11 @@ import './App.css';
 import React, { useState } from 'react';
 import { Jutsu } from 'react-jutsu';
 
-var recorder, stream;
+var recorder, stream, soundRecorder, soundStream;
 
 function App() {
-  const [src, setSrc] = useState({
-    audio: null,
-    video: null,
-  });
+  const [srcVideo, setSrcVideo] = useState('');
+  const [srcAudio, setSrcAudio] = useState('');
   const [room, setRoom] = useState('');
   const [name, setName] = useState('');
   const [call, setCall] = useState(false);
@@ -22,6 +20,18 @@ function App() {
     }
   };
   const startRec = async () => {
+    soundStream = await navigator.mediaDevices.getUserMedia({
+      video: false,
+      audio: true,
+    });
+    soundRecorder = new MediaRecorder(soundStream);
+    const audioChunks = [];
+    soundRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+    soundRecorder.onstop = async (e) => {
+      const audioBlob = new Blob(audioChunks, { type: audioChunks[0].type });
+      await setSrcAudio(URL.createObjectURL(audioBlob));
+    };
+
     stream = await navigator.mediaDevices.getDisplayMedia({
       video: { mediaSource: 'screen' },
       audio: true,
@@ -30,23 +40,29 @@ function App() {
 
     const chunks = [];
     recorder.ondataavailable = (e) => chunks.push(e.data);
-    recorder.onstop = (e) => {
+    recorder.onstop = async (e) => {
       const completeBlob = new Blob(chunks, { type: chunks[0].type });
-      setSrc({
-        ...src,
-        video: URL.createObjectURL(completeBlob),
-      });
+      await setSrcVideo(URL.createObjectURL(completeBlob));
     };
     recorder.start();
+    soundRecorder.start();
   };
   const stopRec = () => {
+    soundRecorder.stop();
     recorder.stop();
     stream.getVideoTracks()[0].stop();
   };
-  return src.video !== null ? (
+  return srcVideo !== '' && srcAudio !== '' ? (
     <center>
-      <video src={src.video} width={720} autoPlay controls />
-      {/* <audio src={src.audio} autoPlay controls /> */}
+      <video
+        onSeeking={(e) => console.log(e)}
+        src={srcVideo}
+        width={720}
+        autoPlay
+        controls
+      />
+      <br />
+      <audio src={srcAudio} autoPlay controls />
     </center>
   ) : call ? (
     <center>
