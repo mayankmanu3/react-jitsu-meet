@@ -7,6 +7,7 @@ var recorder, stream, soundRecorder, soundStream;
 function App() {
   const [srcVideo, setSrcVideo] = useState('');
   const [srcAudio, setSrcAudio] = useState('');
+  const [seek, setSeek] = useState(0);
   const [room, setRoom] = useState('');
   const [name, setName] = useState('');
   const [call, setCall] = useState(false);
@@ -55,14 +56,19 @@ function App() {
   return srcVideo !== '' && srcAudio !== '' ? (
     <center>
       <video
-        onSeeking={(e) => console.log(e)}
         src={srcVideo}
+        currentTime={seek}
+        onSeeking={(e) => setSeek(e.target.currentTime)}
         width={720}
-        autoPlay
         controls
       />
       <br />
-      <audio src={srcAudio} autoPlay controls />
+      <audio
+        onSeeking={(e) => setSeek(e.target.currentTime)}
+        currentTime={seek}
+        src={srcAudio}
+        controls
+      />
     </center>
   ) : call ? (
     <center>
