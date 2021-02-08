@@ -1,20 +1,22 @@
-import './App.css';
-import React, { useState } from 'react';
-import { Jutsu } from 'react-jutsu';
-import Timer from 'react-compound-timer';
-import moment from 'moment';
+import "./App.css";
+import React, { useState } from "react";
+import { Jutsu } from "react-jutsu";
+import Timer from "react-compound-timer";
+import moment from "moment";
 
 var recorder, stream, soundRecorder, soundStream;
 
 function App() {
-  const [srcVideo, setSrcVideo] = useState('');
-  const [srcAudio, setSrcAudio] = useState('');
+  const [srcVideo, setSrcVideo] = useState("");
+  const [srcAudio, setSrcAudio] = useState("");
   const [seek, setSeek] = useState(0);
-  const [room, setRoom] = useState('');
-  const [name, setName] = useState('');
+  const [room, setRoom] = useState("");
+  const [name, setName] = useState("");
   const [call, setCall] = useState(false);
-  const [password, setPassword] = useState('');
-  const [currently, setCurrently] = useState('rec');
+  const [password, setPassword] = useState("");
+  const [control, setControl] = useState("pause");
+  const [volume, setVolume] = useState(0.0);
+  const [currently, setCurrently] = useState("rec");
   const [initTime, setInitTime] = useState(null);
   const [markers, setMarkers] = useState([]);
 
@@ -24,7 +26,7 @@ function App() {
       setCall(true);
       startRec();
       setInitTime(moment(new Date()));
-      setCurrently('rec');
+      setCurrently("rec");
     }
   };
   const startRec = async () => {
@@ -41,7 +43,7 @@ function App() {
     };
 
     stream = await navigator.mediaDevices.getDisplayMedia({
-      video: { mediaSource: 'screen' },
+      video: { mediaSource: "screen" },
       audio: true,
     });
     recorder = new MediaRecorder(stream);
@@ -59,37 +61,59 @@ function App() {
     soundRecorder.stop();
     recorder.stop();
     stream.getVideoTracks()[0].stop();
-    setCurrently('play');
+    setCurrently("play");
   };
-  return srcVideo !== '' && srcAudio !== '' ? (
+  return srcVideo !== "" && srcAudio !== "" ? (
     <center>
       <video
-        id="vid"
+        id='vid'
         src={srcVideo}
+        loop
         currentTime={seek}
         onSeeking={(e) => setSeek(e.target.currentTime)}
         width={720}
-        controls
       />
       <br />
       <audio
-        id="aud"
+        id='aud'
         onSeeking={(e) => setSeek(e.target.currentTime)}
         currentTime={seek}
+        loop
         src={srcAudio}
-        controls
       />
+      <br />
+      <br />
+      <button
+        onClick={() => {
+          var video = document.getElementById("vid");
+          var audio = document.getElementById("aud");
+          if (control === "pause") {
+            audio.play();
+            video.play();
+            setControl("play");
+          } else {
+            audio.pause();
+            video.pause();
+            setControl("pause");
+          }
+        }}
+      >
+        {control === "pause" ? "play" : "pause"}
+      </button>{" "}
+      <br />
+      <br />
       <div style={{ marginTop: 50 }}>
-        {currently === 'play'
+        {currently === "play"
           ? markers.map((mark, i) => {
               return (
                 <button
                   key={i}
                   onClick={() => {
-                    var video = document.getElementById('vid');
-                    var audio = document.getElementById('aud');
+                    var video = document.getElementById("vid");
+                    var audio = document.getElementById("aud");
                     video.currentTime = mark.time;
                     audio.currentTime = mark.time;
+                    setControl("play");
                     video.play();
                     audio.play();
                   }}
@@ -107,8 +131,8 @@ function App() {
         setMarkers(
           markers.concat([
             {
-              name: 'abcd',
-              time: moment(new Date()).diff(initTime, 'millisecond') / 1000,
+              name: name,
+              time: moment(new Date()).diff(initTime, "millisecond") / 1000,
             },
           ])
         )
@@ -125,9 +149,9 @@ function App() {
               loadingComponent={<p>loading ...</p>}
               errorComponent={<p>Oops, something went wrong</p>}
             />
-            <Timer.Hours /> <Timer.Minutes /> <Timer.Seconds />
+            {/* <Timer.Hours /> <Timer.Minutes /> <Timer.Seconds /> */}
             <br />
-            {currently === 'rec' ? (
+            {currently === "rec" ? (
               <button
                 onClick={() => {
                   pause();
@@ -145,30 +169,30 @@ function App() {
     <center>
       <form>
         <input
-          id="room"
-          type="text"
-          placeholder="Room"
+          id='room'
+          type='text'
+          placeholder='Room'
           value={room}
           onChange={(e) => setRoom(e.target.value)}
         />
         <br />
         <input
-          id="name"
-          type="text"
-          placeholder="Name"
+          id='name'
+          type='text'
+          placeholder='Name'
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <br />
         <input
-          id="password"
-          type="text"
-          placeholder="Password (optional)"
+          id='password'
+          type='text'
+          placeholder='Password (optional)'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <br />
-        <button onClick={handleClick} type="submit">
+        <button onClick={handleClick} type='submit'>
           Start / Join
         </button>
       </form>
