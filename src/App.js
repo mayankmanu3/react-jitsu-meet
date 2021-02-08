@@ -11,6 +11,7 @@ function App() {
   const [srcAudio, setSrcAudio] = useState("");
   const [seek, setSeek] = useState(0);
   const [room, setRoom] = useState("");
+  const [type, setType] = useState("host");
   const [name, setName] = useState("");
   const [call, setCall] = useState(false);
   const [password, setPassword] = useState("");
@@ -24,7 +25,7 @@ function App() {
     event.preventDefault();
     if (room && name) {
       setCall(true);
-      startRec();
+      // startRec();
       setInitTime(moment(new Date()));
       setCurrently("rec");
     }
@@ -145,7 +146,7 @@ function App() {
               roomName={room}
               displayName={name}
               password={password}
-              onMeetingEnd={() => stopRec()}
+              onMeetingEnd={() => alert("Meeting has been dismissed")}
               loadingComponent={<p>loading ...</p>}
               errorComponent={<p>Oops, something went wrong</p>}
             />
@@ -191,6 +192,17 @@ function App() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <br />
+        <select
+          id='type'
+          // type='select'
+          placeholder='user type'
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+        >
+          <option value='host'>Host</option>
+          <option value='client'>Client</option>
+        </select>
         <br />
         <button onClick={handleClick} type='submit'>
           Start / Join
